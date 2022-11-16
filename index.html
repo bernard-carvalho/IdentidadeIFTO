@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="leaflet/leaflet.css"/>
+  <link rel="stylesheet" href="estilo.css"/>
+  <script src="leaflet/leaflet.js"></script>
+  <script src="load_dados.js"></script>
+  <style>
+    *{margin: 0; padding: 0;}
+    #map{height:100vh;}
+  </style>
+
+  <title>Exemplo Leaflet</title>
+</head>
+<body>
+  <div id="map">
+  </div>
+  
+</body>
+
+</html>
+<script>
+  var circles=[];
+  let latitude=-10.1993;
+  let longitude=-48.3115;
+  let zoom=18;
+  var map = L.map('map').setView([latitude,longitude],zoom);
+ document.addEventListener("DOMContentLoaded",()=>{
+  
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  draw_circles(circles);
+ });
+
+ function draw_circles(circles){
+    let dados = JSON.parse(localStorage.getItem("dados"));
+    dados.forEach(element => {
+        let lat = element.x;
+        let long = element.y;
+        let name = element.bloco;
+
+        var circle = L.circle([lat,long],{
+        color: 'red',
+        fillColor: '#0d3',
+        fillOpacity: 0.55,
+        radius: 5,
+        weight: 0.1
+        }).addTo(map);
+        
+        let this_circle=circle;
+        let string="";
+        string+="<table><tr><th colspan='3' style='text-align:center;'>"+name+"</th></tr><tr><th>Horario</th><th>Atividade</th><th>Local</th></tr>";
+        
+        console.log(element);
+
+        element.eventos.forEach(element2 => {
+            string+="<tr>";
+            string+="<td>"+element2.horario+"</td>";
+            string+="<td>"+element2.nome+"</td>";
+            string+="<td>"+element2.local+"</td>";
+            string+="</tr>";
+        });
+        string+="</table>";
+        circle.bindPopup(
+            string
+        );
+        
+
+    });
+ }
+
+ </script>
